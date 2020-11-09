@@ -16,16 +16,15 @@ namespace Laba1
 
         bool Remove(string id, DateTime dateTime) //?
         {
-            bool result = false;
-
-            foreach (V1Data item in DataFields)
-            {
-                if (item.Info.Equals(id) && item.Date.Equals(dateTime))
-                {
-                    DataFields.Remove(item);
-                    result = true;
-                }
-            }
+          bool result = false;
+          for (int i = DataFields.Count - 1; i >= 0; i--)
+          {
+              if (DataFields[i].Info.Equals(id) && DataFields[i].Date.Equals(dateTime))
+              {
+                  DataFields.RemoveAt(i);
+                  result = true;
+              }
+          }
             return result;
         }
 
@@ -58,7 +57,7 @@ namespace Laba1
 
         IEnumerator<V1Data> IEnumerable<V1Data>.GetEnumerator() // СЫН  public interface IEnumerable
         {                                                       //IEnumerator GetEnumerator();
-            
+
             return ((IEnumerable<V1Data>)DataFields).GetEnumerator();
         }
 
