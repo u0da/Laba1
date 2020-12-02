@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 namespace Laba1
 {
     struct Grid
@@ -17,6 +18,14 @@ namespace Laba1
         public float GetTime(int n)
         {
             return Start + n * Step; 
+        }
+
+        public string ToString(string format)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(format);
+            string res = ToString();
+            CultureInfo.CurrentCulture = CultureInfo.InstalledUICulture;
+            return res;
         }
 
         public override string ToString()

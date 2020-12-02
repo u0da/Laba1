@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Numerics;
 
 namespace Laba1
@@ -14,9 +15,17 @@ namespace Laba1
             Value = value;
         }
 
+        public string ToString(string format)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(format);
+            string res = ToString() + "\n vector length " + Value.Length()+ '\n';
+            CultureInfo.CurrentCulture = CultureInfo.InstalledUICulture;
+            return res;
+        }
+
         public override string ToString()
         {
-            return $"(T {T}    Value {Value})";
+            return $" T {T}    Value {Value}";
         }
     }
 }

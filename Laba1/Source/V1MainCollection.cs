@@ -1,13 +1,63 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Laba1
 {
     class V1MainCollection : IEnumerable<V1Data>//, IEnumerable
     {
-        private List<V1Data> DataFields = new List<V1Data>();
-        public int Count { get { return DataFields.Count; } }
+        private readonly List<V1Data> DataFields = new List<V1Data>();
+        public int Count
+        {
+            get
+            {
+                if (DataFields == null)
+                    return 0;
+                else
+                    return DataFields.Count;
+            }
+        }
+
+        public int MaxNumberOfMesRes
+        {
+            get
+            {
+                int selector(V1Data selection)
+                {
+                    var query = from dataitem in selection
+                                select dataitem;
+                    return query.Count();
+                }
+                return DataFields.Max(selector);
+            }
+        }
+
+        public IEnumerable<DataItem> EnumerationLength
+        {
+            get
+            {
+                var query = from v1dataOb in DataFields
+                            from dataitem in v1dataOb
+                            orderby dataitem.Value.Length() descending
+                            select dataitem;
+                return query;
+            }
+        }
+
+        public IEnumerable<float> EnumerationTime
+        {
+            get
+            {
+                var TimeQuery = from v1dataOb in DataFields            //отбираем время
+                             from dataitem in v1dataOb
+                             group dataitem by dataitem.T;
+                var query = from time in TimeQuery                     //отбираем только 1 раз
+                            where time.Count() == 1
+                            select time.Key;
+                return query;
+            }
+        }
 
         public void Add(V1Data item)
         {
@@ -42,6 +92,9 @@ namespace Laba1
                 data.InitRandom(10 + 2 * i, 0f, 100f, -1f, 1f);
                 Add(data);
             }
+
+            Add(new V1DataOnGrid($"grid", DateTime.Now, new Grid(1f, 0, 0)));
+            Add(new V1DataCollection($"collection", DateTime.Now)); 
         }
 
         public override string ToString()
@@ -59,6 +112,16 @@ namespace Laba1
         {                                                       //IEnumerator GetEnumerator();
 
             return ((IEnumerable<V1Data>)DataFields).GetEnumerator();
+        }
+
+        public string ToLongString(string format)
+        {
+            string result = "";
+            for (int i = 0; i < Count; i++)
+            {
+                result += DataFields[i].ToLongString(format);
+            }
+            return result;
         }
 
     }

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 
 namespace Laba1
 {
-    class V1DataOnGrid : V1Data
+    class V1DataOnGrid : V1Data, IEnumerable<DataItem>
     {
         public Grid Grid { get; }
         public Vector3[] Values { get; }
@@ -64,5 +65,63 @@ namespace Laba1
             }
             return $"{ToString()} \t {newStr}";
         }
+
+        public override string ToLongString(string format)
+        {
+            string newStr = "\n";
+            for (int i = 0; i < Values.Length; i++)
+            {
+                string time = Grid.GetTime(i).ToString(format);
+                string value = Values[i].ToString(format);
+                string length = Values[i].Length().ToString(format);
+                newStr += $"Time_f {time}       Values_f {value}        Length_f {length}";
+            }
+            string result_str = ToString() + newStr + "\n";
+            return result_str;
+        }
+
+        public override IEnumerator<DataItem> GetEnumerator()
+        {
+            return new DataEnumerator(Values, Grid);
+        }
+
+        private class DataEnumerator : IEnumerator<DataItem>
+        {
+            private Grid grid;
+            private Vector3[] values;
+            private int pos = -1;
+
+            object IEnumerator.Current => Current;
+            public DataItem Current
+            {
+                get
+                {
+                    return new DataItem(grid.GetTime(pos), values[pos]);
+                }
+            }
+
+            public DataEnumerator(Vector3[] values, Grid grid)
+            {
+                this.values = values;
+                this.grid = grid;
+            }
+
+            public bool MoveNext()
+            {
+                pos++;
+                return pos < values.Length;
+            }
+
+            public void Reset()
+            {
+                pos = -1;
+            }
+
+            public void Dispose()
+            {
+                values = null;
+            }
+        }
     }
 }
+
