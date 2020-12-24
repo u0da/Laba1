@@ -36,13 +36,14 @@ namespace Laba1
             //Console.WriteLine("\n eps=0.2\n");
             //PrintNearZero(mainCollection, 0.2f);
 
+            Console.WriteLine("\n\n\n");
             string format = "ru-Ru";
             V1DataCollection dataCollection = new V1DataCollection("test.txt");
             Console.WriteLine(dataCollection.ToLongString(format));
 
             V1MainCollection data = new V1MainCollection();
             data.AddDefaults();
-            Console.WriteLine(data);
+            Console.WriteLine(data.ToLongString(format));
             Console.WriteLine("\nMax vector length: " + data.MaxNumberOfMesRes);
 
             Console.WriteLine("\nFrom the longest to the shortest lenght : \n");
@@ -52,6 +53,7 @@ namespace Laba1
             }
 
             Console.WriteLine("Time: " + string.Join(", ", data.EnumerationTime));
+            
 
             static void PrintNearZero(V1MainCollection mainCollection, float eps)
             {

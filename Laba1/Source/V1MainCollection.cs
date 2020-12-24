@@ -80,21 +80,29 @@ namespace Laba1
 
         public void AddDefaults()
         {
-            for (int i = 0; i < 2; i++) // length of vectors
-            {
-                V1DataOnGrid data = new V1DataOnGrid($"id={i}", DateTime.Now, new Grid(0, 0.5f, 10));
-                data.InitRandom(-1f, 1f);
-                Add(data);
-            }
-            for (int i = 1; i <= 2; i++) // amount of vectors
-            {
-                V1DataCollection data = new V1DataCollection($"id={i}", DateTime.Now);
-                data.InitRandom(10 + 2 * i, 0f, 100f, -1f, 1f);
-                Add(data);
-            }
+            //for (int i = 0; i < 2; i++) // length of vectors
+            //{
+            //    V1DataOnGrid data = new V1DataOnGrid($"id={i}", DateTime.Now, new Grid(0, 0.5f, 3));
+            //    data.InitRandom(-1f, 1f);
+            //    Add(data);
+            //}
+            //for (int i = 1; i <= 2; i++) // amount of vectors
+            //{
+            //    V1DataCollection data = new V1DataCollection($"id={i}", DateTime.Now);
+            //    data.InitRandom(10 + 2 * i, 0f, 100f, -1f, 1f);
+            //    Add(data);
+            //}
 
-            Add(new V1DataOnGrid($"grid", DateTime.Now, new Grid(1f, 0, 0)));
-            Add(new V1DataCollection($"collection", DateTime.Now)); 
+            //Add(new V1DataOnGrid($"grid", DateTime.Now, new Grid(1f, 0, 0)));
+            //Add(new V1DataCollection($"collection", DateTime.Now));
+
+            V1DataOnGrid data = new V1DataOnGrid($"id={0}", DateTime.Now, new Grid(0, 0.5f, 3));
+            data.InitRandom(-1f, 1f);
+            Add(data);
+
+            data = new V1DataOnGrid($"id={0}", DateTime.Now, new Grid(0,0.5f, 5));
+            data.InitRandom(-1f, 1f);
+            Add(data);
         }
 
         public override string ToString()
