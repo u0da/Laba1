@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Globalization;
 
 namespace Laba1
 {
@@ -69,17 +68,15 @@ namespace Laba1
 
         public override string ToLongString(string format)
         {
-            CultureInfo.CurrentCulture = new CultureInfo(format);
             string newStr = "\n";
             for (int i = 0; i < Values.Length; i++)
             {
-                string time = Grid.GetTime(i).ToString();
-                string value = Values[i].ToString();
-                string length = Values[i].Length().ToString();
-                newStr += $"Time_f {time}       Values_f {value}        Length_f {length}\n";
+                string time = Grid.GetTime(i).ToString(format);
+                string value = Values[i].ToString(format);
+                string length = Values[i].Length().ToString(format);
+                newStr += $"Time_f {time}       Values_f {value}        Length_f {length}";
             }
             string result_str = ToString() + newStr + "\n";
-            CultureInfo.CurrentCulture = CultureInfo.InstalledUICulture;
             return result_str;
         }
 

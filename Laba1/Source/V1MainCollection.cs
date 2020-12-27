@@ -1,13 +1,63 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Laba1
 {
+    enum ChangeInfo
+    {
+        ItemChanged,
+        Add,
+        Remove,
+        Replace
+    }
+
+    delegate void DataChangedEventHandler(object source, DataChangedEventArgs args);
+
+    class DataChangedEventArgs
+    {
+        ChangeInfo CInfo { get; set; }
+
+        string Str { get; set; }
+
+        public DataChangedEventArgs(ChangeInfo change, string str)
+        {
+            CInfo = change;
+            Str = str;
+        }
+
+        public override string ToString()
+        {
+            return GetType().Name + $" CInfo {CInfo} \t Str {Str}";
+        }
+    }
+
     class V1MainCollection : IEnumerable<V1Data>//, IEnumerable
     {
-        private readonly List<V1Data> DataFields = new List<V1Data>();
+        private List<V1Data> DataFields = new List<V1Data>(); // readonly deleted
+
+        public DataChangedEventHandler DataChanged;
+        //индексатор
+        public V1Data this[int index]
+        {
+            get
+            {
+                return DataFields[index];
+            }
+            set
+            {
+                if (DataFields[index] != value)  // получаем через параметр value переданный объект v1data и сохраняем его в массив по индексу                                                 
+                {
+                    DataChanged(this, new DataChangedEventArgs(ChangeInfo.Replace, DataFields[index].Info));
+                    DataFields[index].PropertyChanged -= onPropertyChanged;
+                    value.PropertyChanged += onPropertyChanged;
+                    DataFields[index] = value;
+
+                }
+            }
+        }
         public int Count
         {
             get
@@ -50,8 +100,8 @@ namespace Laba1
             get
             {
                 var TimeQuery = from v1dataOb in DataFields            //отбираем время
-                             from dataitem in v1dataOb
-                             group dataitem by dataitem.T;
+                                from dataitem in v1dataOb
+                                group dataitem by dataitem.T;
                 var query = from time in TimeQuery                     //отбираем только 1 раз
                             where time.Count() == 1
                             select time.Key;
@@ -59,22 +109,28 @@ namespace Laba1
             }
         }
 
+
         public void Add(V1Data item)
         {
             DataFields.Add(item);
+            item.PropertyChanged += onPropertyChanged;
+            DataChanged(this, new DataChangedEventArgs(ChangeInfo.Add, item.Info));
         }
 
-        bool Remove(string id, DateTime dateTime) //?
+        public bool Remove(string id, DateTime dateTime)
         {
-          bool result = false;
-          for (int i = DataFields.Count - 1; i >= 0; i--)
-          {
-              if (DataFields[i].Info.Equals(id) && DataFields[i].Date.Equals(dateTime))
-              {
-                  DataFields.RemoveAt(i);
-                  result = true;
-              }
-          }
+            bool result = false;
+            for (int i = DataFields.Count - 1; i >= 0; i--)
+            {
+                if (DataFields[i].Info.Equals(id) && DataFields[i].Date.Equals(dateTime))
+                {
+                    V1Data item = DataFields[i];
+                    DataFields.RemoveAt(i);
+                    item.PropertyChanged -= onPropertyChanged;
+                    DataChanged(this, new DataChangedEventArgs(ChangeInfo.Remove, item.Info));
+                    result = true;
+                }
+            }
             return result;
         }
 
@@ -100,10 +156,19 @@ namespace Laba1
             data.InitRandom(-1f, 1f);
             Add(data);
 
-            data = new V1DataOnGrid($"id={0}", DateTime.Now, new Grid(0,0.5f, 5));
+            data = new V1DataOnGrid($"id={1}", DateTime.Now, new Grid(0, 0.5f, 5));
             data.InitRandom(-1f, 1f);
             Add(data);
+
+            V1DataCollection datacol = new V1DataCollection($"id={2}", DateTime.Now);
+            datacol.InitRandom(12, 0f, 100f, -1f, 1f);
+            Add(datacol);
+
+            datacol = new V1DataCollection($"id={3}", DateTime.Now);
+            datacol.InitRandom(12, 0f, 100f, -1f, 1f);
+            Add(datacol);
         }
+
 
         public override string ToString()
         {
@@ -132,6 +197,10 @@ namespace Laba1
             return result;
         }
 
+        private void onPropertyChanged(object source, PropertyChangedEventArgs args)
+        {
+            string info = ((V1Data)source).Info + "\t" + args.PropertyName;
+            DataChanged(this, new DataChangedEventArgs(ChangeInfo.ItemChanged, info));
+        }
     }
-
 }

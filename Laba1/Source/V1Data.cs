@@ -1,14 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Laba1
 {
-    abstract class V1Data : IEnumerable<DataItem>
+    abstract class V1Data : INotifyPropertyChanged, IEnumerable<DataItem>
     {
-        public string Info { get; set; }
-        public DateTime Date { get; set; }
+        private string info;
+        private DateTime date;
 
+        public string Info
+        {
+            get
+            {
+                return info;
+            }
+            set
+            {
+                info = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Info"));
+                }
+            }
+        }
+        public DateTime Date
+        {
+            get
+            {
+                return date;
+            }
+            set
+            {
+                date = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Date"));
+                }
+            }
+        }
         public V1Data() {}
         public V1Data(string info, DateTime date)
         {
@@ -16,11 +48,13 @@ namespace Laba1
             Date = date;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged; //  СОБЫТИЕ PropertyChanged, когда изменяются значения cвойств базового класса
+
         public abstract float[] NearZero(float eps);
         public abstract string ToLongString();
         public override string ToString()
         {
-            return $"Date {Date} \n Info {Info}";
+            return $"Date {Date.ToString(CultureInfo.GetCultureInfo("ru"))} \n Info {Info}";
         }
 
         public abstract string ToLongString(string format);
